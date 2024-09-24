@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import pyodbc
 
-SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://@Alex\yo-al/gps_database?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
+SQLALCHEMY_DATABASE_URL = "mssql+pyodbc://192.168.3.102/gps_db?driver=ODBC+Driver+17+for+SQL+Server&trusted_connection=yes"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -21,6 +21,16 @@ class GPSDeviceDB(Base):
     
 # Crear las tablas en la base de datos (si no existen)
 Base.metadata.create_all(bind=engine)
+
+# Pydantic model para la API
+class GPSDevice(BaseModel):
+    id: int
+    name: str
+    latitude: float
+    longitude: float
+
+    class Config:
+        orm_mode = True
 
 app = FastAPI()
 
